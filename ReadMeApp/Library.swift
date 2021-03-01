@@ -1,11 +1,35 @@
-//
-//  Library.swift
-//  ReadMeApp
-//
-//  Created by Macbook on 1. 3. 2021..
-//
 
-import Foundation
+/// Copyright (c) 2020 Razeware LLC
+///
+/// Permission is hereby granted, free of charge, to any person obtaining a copy
+/// of this software and associated documentation files (the "Software"), to deal
+/// in the Software without restriction, including without limitation the rights
+/// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+/// copies of the Software, and to permit persons to whom the Software is
+/// furnished to do so, subject to the following conditions:
+///
+/// The above copyright notice and this permission notice shall be included in
+/// all copies or substantial portions of the Software.
+///
+/// Notwithstanding the foregoing, you may not use, copy, modify, merge, publish,
+/// distribute, sublicense, create a derivative work, and/or sell copies of the
+/// Software in any work that is designed, intended, or marketed for pedagogical or
+/// instructional purposes related to programming, coding, application development,
+/// or information technology.  Permission for such use, copying, modification,
+/// merger, publication, distribution, sublicensing, creation of derivative works,
+/// or sale is expressly withheld.
+///
+/// This project and source code may use libraries or frameworks that are
+/// released under various Open-Source licenses. Use of those libraries and
+/// frameworks are governed by their own individual licenses.
+///
+/// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+/// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+/// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+/// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+/// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+/// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+/// THE SOFTWARE.
 import UIKit
 
 // MARK:- Reusable SFSymbol Images
@@ -23,12 +47,11 @@ enum LibrarySymbol {
     case .bookmarkFill:
       imageName = "bookmark.fill"
     case .letterSquare(let letter):
-      guard
-        let letter = letter?.lowercased(),
-        let image = UIImage(systemName: "\(letter).square")
-      else {
-        imageName = "square"
-        break
+      guard let letter = letter?.lowercased(),
+      let image = UIImage(systemName: "\(letter).square")
+        else {
+          imageName = "square"
+          break
       }
       return image
     }
@@ -51,4 +74,24 @@ enum Library {
     Book(title: "Drawing People", author: "Barbara Bradley"),
     Book(title: "What to Say When You Talk to Yourself", author: "Shad Helmstetter")
   ]
-}
+  
+  static func saveImage(_ image: UIImage, forBook book: Book) {
+      let imageURL = FileManager.documentDirectoryURL.appendingPathComponent(book.title)
+      if let jpgData = image.jpegData(compressionQuality: 0.7) {
+        try? jpgData.write(to: imageURL, options: .atomicWrite)
+      }
+    }
+    
+    static func loadImage(forBook book: Book) -> UIImage? {
+      let imageURL = FileManager.documentDirectoryURL.appendingPathComponent(book.title)
+      return UIImage(contentsOfFile: imageURL.path)
+    }
+  }
+
+
+  extension FileManager {
+    static var documentDirectoryURL: URL {
+      return `default`.urls(for: .documentDirectory, in: .userDomainMask)[0]
+    }
+  }
+
